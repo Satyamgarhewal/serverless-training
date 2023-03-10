@@ -2,11 +2,12 @@ const AWS = require("aws-sdk");
 const documentClient = new AWS.DynamoDB.DocumentClient();
 
 const Dynamo = {
-  async get(id, tableName) {
+  async get(ID, TableName) {
+    // The below params are documented in AWS, so we need to share it as shown below, with no change.
     const params = {
-      tableName,
-      key: {
-        id,
+      TableName,
+      Key: {
+        ID,
       },
     };
 

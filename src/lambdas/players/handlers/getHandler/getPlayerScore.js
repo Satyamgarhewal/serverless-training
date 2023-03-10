@@ -7,14 +7,11 @@ exports.handler = async (event) => {
   }
 
   let id = event.pathParameters.ID;
-  console.log("id fetched --->", id);
-  console.log("tableName ---->", tableName);
   try {
     const user = await Dynamo.get(id, tableName).catch((err) => {
       console.log("Error in Dynamo get", err);
       return null;
     });
-    console.log("user ----->", user);
     if (!user) {
       return Responses._400({ message: "Failed to get user by ID" });
     }
