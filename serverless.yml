@@ -41,6 +41,13 @@ functions:
           path: getPlayerScore/{ID}
           method: GET
           cors: true
+  createPlayerScore:
+    handler: src/lambdas/players/handlers/postHandler/createPlayerScore.handler
+    events:
+      - http:
+          path: createPlayerScore/{ID}
+          method: POST
+          cors: true
 
 resources:
   Resources:
