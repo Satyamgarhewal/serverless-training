@@ -1,0 +1,70 @@
+service: serverless-training
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  environment:
+    tableName: ${self:custom.tableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "*"
+
+plugins:
+  - serverless-s3-sync
+  - serverless-offline
+  # - serverless-webpack
+
+package:
+  individually: true
+
+custom:
+  tableName: player-points-v2
+  s3Sync:
+    - bucketName: serverless-s3-bucket23
+      localDir: Uploads
+
+functions:
+  getUser:
+    handler: src/lambdas/users/handlers/getHandler/getUser.handler
+    events:
+      - http:
+          path: getUser/{ID}
+          method: GET
+          cors: true
+  getPlayerScore:
+    handler: src/lambdas/players/handlers/getHandler/getPlayerScore.handler
+    events:
+      - http:
+          path: getPlayerScore/{ID}
+          method: GET
+          cors: true
+
+resources:
+  Resources:
+    DemoBucketUpload:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: serverless-s3-bucket23
+    MyDynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+          - AttributeName: Name
+            AttributeType: S
+          - AttributeName: Points
+            AttributeType: Number
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+          - AttributeName: Name
+            KeyType: Range
+          - AttributeName: Points
+            KeyType: Range
+
+        BillingMode: PAY_PER_REQUEST
