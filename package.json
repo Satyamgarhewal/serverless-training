@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.1329.0",
+    "lambda-hooks": "^0.2.1",
     "serverless-offline": "^12.0.4",
     "serverless-s3-sync": "^3.1.0",
     "serverless-webpack": "^5.11.0",

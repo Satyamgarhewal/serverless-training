@@ -6,10 +6,13 @@ provider:
   runtime: nodejs18.x
   environment:
     tableName: ${self:custom.tableName}
+    bucketName: ${self:custom.bucketName}
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - s3:*
         - dynamodb:*
+        - ses:*
       Resource: "*"
 
 plugins:
@@ -22,8 +25,9 @@ package:
 
 custom:
   tableName: player-points-v1
+  bucketName: serverless-s3-bucket23
   s3Sync:
-    - bucketName: serverless-s3-bucket23
+    - bucketName: ${self:custom.bucketName}
       localDir: Uploads
 
 functions:
@@ -34,6 +38,7 @@ functions:
           path: getUser/{ID}
           method: GET
           cors: true
+          private: true
   getPlayerScore:
     handler: src/lambdas/players/handlers/getHandler/getPlayerScore.handler
     events:
@@ -48,13 +53,34 @@ functions:
           path: createPlayerScore/{ID}
           method: POST
           cors: true
+  createFile:
+    handler: src/lambdas/users/handlers/postHandler/createFile.handler
+    events:
+      - http:
+          path: createFile/{fileName}
+          method: POST
+          cors: true
+  getFile:
+    handler: src/lambdas/users/handlers/getHandler/getFile.handler
+    events:
+      - http:
+          path: getFile/{fileName}
+          method: GET
+          cors: true
+  sendEmail:
+    handler: src/lambdas/emails/handlers/postHandler/sendEmail.handler
+    events:
+      - http:
+          path: sendEmail
+          method: POST
+          cors: true
 
 resources:
   Resources:
     DemoBucketUpload:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: serverless-s3-bucket23
+        BucketName: ${self:custom.bucketName}
     MyDynamoDbTable:
       Type: AWS::DynamoDB::Table
       Properties:
