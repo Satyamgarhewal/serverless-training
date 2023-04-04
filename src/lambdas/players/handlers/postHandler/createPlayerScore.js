@@ -1,12 +1,15 @@
+// file imports
 const Responses = require("../../../../app/common/apiResponses");
 const Dynamo = require("../../../../app/common/dynamo");
+const { hooksWithValidation } = require("../../../../app/common/hooks");
+const {
+  bodySchema,
+  pathSchema,
+} = require("../../../../app/schemas/playerSchemas/createPlayerScore.schema");
+// variables
 const tableName = process.env.tableName;
-const writeHooks = require("../../../../app/common/hooks");
 
 const createPlayer = async (event) => {
-  if (!event.pathParameters.ID) {
-    return Responses._400({ message: "No ID found" });
-  }
   const ID = event.pathParameters.ID;
   const user = event.body;
   user.ID = ID;
@@ -20,4 +23,4 @@ const createPlayer = async (event) => {
   return Responses._200({ newUser });
 };
 
-exports.handler = writeHooks(createPlayer);
+exports.handler = hooksWithValidation({ bodySchema, pathSchema })(createPlayer);

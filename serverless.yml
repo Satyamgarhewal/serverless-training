@@ -13,6 +13,7 @@ provider:
         - s3:*
         - dynamodb:*
         - ses:*
+        - comprehend:*
       Resource: "*"
 
 plugins:
@@ -72,6 +73,13 @@ functions:
     events:
       - http:
           path: sendEmail
+          method: POST
+          cors: true
+  analyse:
+    handler: src/lambdas/analyse/handlers/postHandler/analyse.handler
+    events:
+      - http:
+          path: analyse
           method: POST
           cors: true
 
